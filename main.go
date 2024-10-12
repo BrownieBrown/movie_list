@@ -1,5 +1,7 @@
 package main
 
+import "movie_list/game"
+
 func main() {
-	println("Hello, World!")
+	game.StartGame()
 }
