@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "github.com/browniebrown/movie_list/pkg/protobuf";
+package protobuf;
+
+service PlayerService {
+  rpc AddPlayer(AddPlayerRequest) returns (AddPlayerResponse);
+  rpc RemovePlayer(RemovePlayerRequest) returns (RemovePlayerResponse);
+}
+
+message AddPlayerRequest {
+  string name = 1;
+}
+
+message AddPlayerResponse {
+  string id = 1;
+}
+
+message RemovePlayerRequest {
+  string id = 1;
+}
+
+message RemovePlayerResponse {
+  bool success = 1;
+}
