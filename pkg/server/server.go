@@ -23,6 +23,18 @@ func (s *Server) AddPlayer(ctx context.Context, req *protobuf.AddPlayerRequest) 
 	return &protobuf.AddPlayerResponse{Id: id.String()}, nil
 }
 
+func (s *Server) ListPlayers(ctx context.Context, req *protobuf.ListPlayersRequest) (*protobuf.ListPlayersResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var playerNames []string
+	for _, name := range s.Players {
+		playerNames = append(playerNames, name)
+	}
+
+	return &protobuf.ListPlayersResponse{Players: playerNames}, nil
+}
+
 func (s *Server) RemovePlayer(ctx context.Context, req *protobuf.RemovePlayerRequest) (*protobuf.RemovePlayerResponse, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

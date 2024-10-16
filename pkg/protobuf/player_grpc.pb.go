@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.28.2
-// source: protobuf/player.proto
+// source: pkg/protobuf/player.proto
 
 package protobuf
 
@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	PlayerService_AddPlayer_FullMethodName    = "/protobuf.PlayerService/AddPlayer"
 	PlayerService_RemovePlayer_FullMethodName = "/protobuf.PlayerService/RemovePlayer"
+	PlayerService_ListPlayers_FullMethodName  = "/protobuf.PlayerService/ListPlayers"
 )
 
 // PlayerServiceClient is the client API for PlayerService service.
@@ -30,6 +31,7 @@ const (
 type PlayerServiceClient interface {
 	AddPlayer(ctx context.Context, in *AddPlayerRequest, opts ...grpc.CallOption) (*AddPlayerResponse, error)
 	RemovePlayer(ctx context.Context, in *RemovePlayerRequest, opts ...grpc.CallOption) (*RemovePlayerResponse, error)
+	ListPlayers(ctx context.Context, in *ListPlayersRequest, opts ...grpc.CallOption) (*ListPlayersResponse, error)
 }
 
 type playerServiceClient struct {
@@ -60,12 +62,23 @@ func (c *playerServiceClient) RemovePlayer(ctx context.Context, in *RemovePlayer
 	return out, nil
 }
 
+func (c *playerServiceClient) ListPlayers(ctx context.Context, in *ListPlayersRequest, opts ...grpc.CallOption) (*ListPlayersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPlayersResponse)
+	err := c.cc.Invoke(ctx, PlayerService_ListPlayers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PlayerServiceServer is the server API for PlayerService service.
 // All implementations must embed UnimplementedPlayerServiceServer
 // for forward compatibility.
 type PlayerServiceServer interface {
 	AddPlayer(context.Context, *AddPlayerRequest) (*AddPlayerResponse, error)
 	RemovePlayer(context.Context, *RemovePlayerRequest) (*RemovePlayerResponse, error)
+	ListPlayers(context.Context, *ListPlayersRequest) (*ListPlayersResponse, error)
 	mustEmbedUnimplementedPlayerServiceServer()
 }
 
@@ -81,6 +94,9 @@ func (UnimplementedPlayerServiceServer) AddPlayer(context.Context, *AddPlayerReq
 }
 func (UnimplementedPlayerServiceServer) RemovePlayer(context.Context, *RemovePlayerRequest) (*RemovePlayerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemovePlayer not implemented")
+}
+func (UnimplementedPlayerServiceServer) ListPlayers(context.Context, *ListPlayersRequest) (*ListPlayersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPlayers not implemented")
 }
 func (UnimplementedPlayerServiceServer) mustEmbedUnimplementedPlayerServiceServer() {}
 func (UnimplementedPlayerServiceServer) testEmbeddedByValue()                       {}
@@ -139,6 +155,24 @@ func _PlayerService_RemovePlayer_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PlayerService_ListPlayers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPlayersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlayerServiceServer).ListPlayers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PlayerService_ListPlayers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlayerServiceServer).ListPlayers(ctx, req.(*ListPlayersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PlayerService_ServiceDesc is the grpc.ServiceDesc for PlayerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -154,7 +188,11 @@ var PlayerService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "RemovePlayer",
 			Handler:    _PlayerService_RemovePlayer_Handler,
 		},
+		{
+			MethodName: "ListPlayers",
+			Handler:    _PlayerService_ListPlayers_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "protobuf/player.proto",
+	Metadata: "pkg/protobuf/player.proto",
 }

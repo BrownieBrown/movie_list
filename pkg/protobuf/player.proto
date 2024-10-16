@@ -6,6 +6,7 @@ package protobuf;
 service PlayerService {
   rpc AddPlayer(AddPlayerRequest) returns (AddPlayerResponse);
   rpc RemovePlayer(RemovePlayerRequest) returns (RemovePlayerResponse);
+  rpc ListPlayers(ListPlayersRequest) returns (ListPlayersResponse);
 }
 
 message AddPlayerRequest {
@@ -22,4 +23,10 @@ message RemovePlayerRequest {
 
 message RemovePlayerResponse {
   bool success = 1;
+}
+
+message ListPlayersRequest {}
+
+message ListPlayersResponse {
+  repeated string players = 1;
 }

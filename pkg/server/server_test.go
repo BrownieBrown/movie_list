@@ -25,6 +25,27 @@ func TestAddPlayer(t *testing.T) {
 	assert.Equal(t, "John Doe", s.Players[id])
 }
 
+func TestListPlayers(t *testing.T) {
+	s := &Server{Players: make(map[uuid.UUID]string)}
+
+	req := &protobuf.ListPlayersRequest{}
+	resp, err := s.ListPlayers(context.Background(), req)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Empty(t, resp.GetPlayers())
+
+	s.Players[uuid.New()] = "John Doe"
+	s.Players[uuid.New()] = "Jane Doe"
+
+	resp, err = s.ListPlayers(context.Background(), req)
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Len(t, resp.GetPlayers(), 2)
+	assert.Contains(t, resp.GetPlayers(), "John Doe")
+	assert.Contains(t, resp.GetPlayers(), "Jane Doe")
+}
+
 func TestRemovePlayer(t *testing.T) {
 	s := &Server{Players: make(map[uuid.UUID]string)}
 

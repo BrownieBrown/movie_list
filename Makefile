@@ -1,5 +1,5 @@
 PROTO_DIR = protobuf
-PROTO_FILE = $(PROTO_DIR)/player.proto
+PROTO_FILE = pkg/$(PROTO_DIR)/player.proto
 GO_OUT_DIR = .
 
 .PHONY: all proto
