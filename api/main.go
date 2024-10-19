@@ -10,7 +10,7 @@ import (
 
 func main() {
 	app := fiber.New()
-	playerController := controller.NewPlayerController(service.NewPlayerService())
+	playerController := controller.NewGameController(service.NewGameService())
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1")

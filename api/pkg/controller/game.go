@@ -7,23 +7,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type PlayerControllerInterface interface {
+type GameControllerInterface interface {
 	AddPlayer(c *fiber.Ctx) error
 	GetPlayers(c *fiber.Ctx) error
 	DeletePlayer(c *fiber.Ctx) error
 }
 
-type PlayerController struct {
-	Service *service.PlayerService
+type GameController struct {
+	Service *service.GameService
 }
 
-func NewPlayerController(service *service.PlayerService) *PlayerController {
-	return &PlayerController{
+func NewGameController(service *service.GameService) *GameController {
+	return &GameController{
 		Service: service,
 	}
 }
 
-func (pc *PlayerController) AddPlayer(c *fiber.Ctx) error {
+func (gc *GameController) AddPlayer(c *fiber.Ctx) error {
 	var req models.AddPlayerRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -31,12 +31,12 @@ func (pc *PlayerController) AddPlayer(c *fiber.Ctx) error {
 		})
 	}
 
-	res := pc.Service.AddPlayer(req)
+	res := gc.Service.AddPlayer(req)
 	return c.JSON(res)
 }
 
-func (pc *PlayerController) GetPlayers(c *fiber.Ctx) error {
-	res, err := pc.Service.GetPlayers()
+func (gc *GameController) GetPlayers(c *fiber.Ctx) error {
+	res, err := gc.Service.GetPlayers()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -46,7 +46,7 @@ func (pc *PlayerController) GetPlayers(c *fiber.Ctx) error {
 	return c.JSON(res)
 }
 
-func (pc *PlayerController) DeletePlayer(c *fiber.Ctx) error {
+func (gc *GameController) DeletePlayer(c *fiber.Ctx) error {
 	var req models.DeletePlayerRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -54,6 +54,6 @@ func (pc *PlayerController) DeletePlayer(c *fiber.Ctx) error {
 		})
 	}
 
-	res := pc.Service.DeletePlayer(req)
+	res := gc.Service.DeletePlayer(req)
 	return c.JSON(res)
 }

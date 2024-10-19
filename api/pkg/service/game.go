@@ -2,34 +2,31 @@ package service
 
 import (
 	"errors"
-	"log"
 	"movie_list/api/pkg/models"
 	"sync"
-	"time"
 
 	"github.com/google/uuid"
 )
 
-type PlayerServiceInterface interface {
+type GameInterface interface {
 	AddPlayer(req models.AddPlayerRequest) models.AddPlayerResponse
 	GetPlayers() (models.GetPlayersResponse, error)
 	DeletePlayer(req models.DeletePlayerRequest) models.DeletePlayerResponse
 }
 
-type PlayerService struct {
+type GameService struct {
 	mu      sync.RWMutex
 	Players map[uuid.UUID]models.Player
 }
 
-func NewPlayerService() *PlayerService {
-	return &PlayerService{
+func NewGameService() *GameService {
+	return &GameService{
 		Players: make(map[uuid.UUID]models.Player),
 	}
 }
 
-func (s *PlayerService) AddPlayer(req models.AddPlayerRequest) models.AddPlayerResponse {
+func (gs *GameService) AddPlayer(req models.AddPlayerRequest) models.AddPlayerResponse {
 	if req.Name == "" {
-		log.Printf("[%s] AddPlayer: Name is required\n", time.Now().Format(time.RFC3339))
 		return models.AddPlayerResponse{
 			ID:      uuid.Nil,
 			Success: false,
@@ -37,8 +34,8 @@ func (s *PlayerService) AddPlayer(req models.AddPlayerRequest) models.AddPlayerR
 		}
 	}
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
 
 	playerID := uuid.New()
 	player := models.Player{
@@ -46,9 +43,8 @@ func (s *PlayerService) AddPlayer(req models.AddPlayerRequest) models.AddPlayerR
 		Name: req.Name,
 	}
 
-	s.Players[playerID] = player
+	gs.Players[playerID] = player
 
-	log.Printf("[%s] AddPlayer: Added player with ID %s\n", time.Now().Format(time.RFC3339), playerID)
 	return models.AddPlayerResponse{
 		ID:      playerID,
 		Success: true,
@@ -56,12 +52,11 @@ func (s *PlayerService) AddPlayer(req models.AddPlayerRequest) models.AddPlayerR
 	}
 }
 
-func (s *PlayerService) GetPlayers() (models.GetPlayersResponse, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+func (gs *GameService) GetPlayers() (models.GetPlayersResponse, error) {
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
 
-	if s.Players == nil {
-		log.Printf("[%s] GetPlayers: Players map is nil\n", time.Now().Format(time.RFC3339))
+	if gs.Players == nil {
 		return models.GetPlayersResponse{
 			Players: nil,
 			Success: false,
@@ -69,12 +64,11 @@ func (s *PlayerService) GetPlayers() (models.GetPlayersResponse, error) {
 		}, errors.New("players data is unavailable")
 	}
 
-	players := make([]models.Player, 0, len(s.Players))
-	for _, player := range s.Players {
+	players := make([]models.Player, 0, len(gs.Players))
+	for _, player := range gs.Players {
 		players = append(players, player)
 	}
 
-	log.Printf("[%s] GetPlayers: Retrieved %d players\n", time.Now().Format(time.RFC3339), len(players))
 	return models.GetPlayersResponse{
 		Players: players,
 		Success: true,
@@ -82,29 +76,26 @@ func (s *PlayerService) GetPlayers() (models.GetPlayersResponse, error) {
 	}, nil
 }
 
-func (s *PlayerService) DeletePlayer(req models.DeletePlayerRequest) models.DeletePlayerResponse {
+func (gs *GameService) DeletePlayer(req models.DeletePlayerRequest) models.DeletePlayerResponse {
 	if req.ID == uuid.Nil {
-		log.Printf("[%s] DeletePlayer: Invalid UUID provided\n", time.Now().Format(time.RFC3339))
 		return models.DeletePlayerResponse{
 			Success: false,
 			Message: "Invalid player ID",
 		}
 	}
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
 
-	if _, ok := s.Players[req.ID]; !ok {
-		log.Printf("[%s] DeletePlayer: Player with ID %s not found\n", time.Now().Format(time.RFC3339), req.ID)
+	if _, ok := gs.Players[req.ID]; !ok {
 		return models.DeletePlayerResponse{
 			Success: false,
 			Message: "Player not found",
 		}
 	}
 
-	delete(s.Players, req.ID)
+	delete(gs.Players, req.ID)
 
-	log.Printf("[%s] DeletePlayer: Deleted player with ID %s\n", time.Now().Format(time.RFC3339), req.ID)
 	return models.DeletePlayerResponse{
 		Success: true,
 		Message: "Player deleted successfully",

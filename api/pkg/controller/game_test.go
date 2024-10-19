@@ -16,7 +16,7 @@ import (
 
 func setupApp() *fiber.App {
 	app := fiber.New()
-	playerController := NewPlayerController(service.NewPlayerService())
+	playerController := NewGameController(service.NewGameService())
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1")
