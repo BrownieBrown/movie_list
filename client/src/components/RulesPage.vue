@@ -1,36 +1,47 @@
 <template>
-  <div class="rules_page">
-    <h1>The Rules of the movie list are as follows</h1>
-    <p>
-      1. During the first round each randomly selected player may add a chosen
-      amount of movies.
-    </p>
-    <p>
-      2. During the second round each player may strike out a selected amount of
-      movies.
-    </p>
-    <p>
-      3. During the third round the players watch trailers for all still
-      available movies.
-    </p>
-    <p>
-      4. During the fourth and final round the players each cast their vote for
-      their movie of choice.
-    </p>
-    <p>5. The movie with the most votes wins.</p>
-    <p>In case of a tie the players vote again!</p>
-    <button @click="navigateToAddPlayers">ADD PLAYERS</button>
+  <div>
+    <NavBar />
+
+    <div class="rules_page">
+      <h1>The Rules of the movie list are as follows</h1>
+      <p>
+        1. During the first round each randomly selected player may add a chosen
+        amount of movies.
+      </p>
+      <p>
+        2. During the second round each player may strike out a selected amount
+        of movies.
+      </p>
+      <p>
+        3. During the third round the players watch trailers for all still
+        available movies.
+      </p>
+      <p>
+        4. During the fourth and final round the players each cast their vote
+        for their movie of choice.
+      </p>
+      <p>5. The movie with the most votes wins.</p>
+      <p>In case of a tie the players vote again!</p>
+      <button @click="navigateToAddPlayers">ADD PLAYERS</button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+import NavBar from './NavBar.vue'
+
+export default defineComponent({
+  name: 'RulesPage',
+  components: {
+    NavBar,
+  },
   methods: {
     navigateToAddPlayers() {
       this.$router.push('/add_players')
     },
   },
-}
+})
 </script>
 
 <style scoped>

@@ -7,3 +7,23 @@ body {
 button {
   font-family: 'Space Mono', monospace;
 }
+
+input {
+  font-family: 'Space Mono', monospace;
+}
+
+button {
+  font-family: 'Space Mono', monospace;
+}
+
+li {
+  font-family: 'Space Mono', monospace;
+}
+
+ul {
+  font-family: 'Space Mono', monospace;
+}
+
+li button {
+  font-family: 'Space Mono', monospace;
+}
